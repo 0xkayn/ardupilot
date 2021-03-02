@@ -57,6 +57,15 @@
  # define FRAME_CONFIG   MULTICOPTER_FRAME
 #endif
 
+
+//////////////////////////////////////////////////////////////////////////////
+// MAVSH
+//
+#ifndef MAVSH_COMPID
+ # define MAVSH_COMPID      200     // default value for my new parameter
+ # define MAVSH_TELEMPORT   SERIAL_CONTROL_DEV_TELEM2       // default uart that mavsh will be used
+#endif
+
 /////////////////////////////////////////////////////////////////////////////////
 // TradHeli defaults
 #if FRAME_CONFIG == HELI_FRAME

@@ -23,7 +23,7 @@ public:
     // by newer code.
     //
     static const uint16_t        k_format_version = 120;
-
+    
     // Parameter identities.
     //
     // The enumeration defined here is used to ensure that every parameter
@@ -221,7 +221,10 @@ public:
         k_param_gcs4,
         k_param_gcs5,
         k_param_gcs6,
-
+        k_param_mavsh_compid,
+        k_param_mavsh_telemport,
+        
+        
         //
         // 135 : reserved for Solo until features merged with master
         //
@@ -387,6 +390,8 @@ public:
     AP_Int16        sysid_this_mav;
     AP_Int16        sysid_my_gcs;
     AP_Int8         telem_delay;
+    AP_Int16        mavsh_compid;
+    AP_Int16        mavsh_telemport;
 
     AP_Float        throttle_filt;
     AP_Int16        throttle_behavior;

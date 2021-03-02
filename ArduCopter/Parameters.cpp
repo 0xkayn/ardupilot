@@ -57,6 +57,20 @@ const AP_Param::Info Copter::var_info[] = {
     // @User: Advanced
     GSCALAR(sysid_my_gcs,   "SYSID_MYGCS",     255),
 
+    // @Param: MAVSH_COMPID
+    // @DisplayName: My MAVSH device's component id. 
+    // @Description: Used to establish a MAVSH session.
+    // @Range: 1 255
+    // @User: Advanced
+    GSCALAR(mavsh_compid,   "MAVSH_COMPID",     200),
+
+    // @Param: MAVSH_UART
+    // @DisplayName: UART your companion computer is wired to. 
+    // @Description: Used to establish a MAVSH session.
+    // @Range: 1 255
+    // @User: Advanced
+    GSCALAR(mavsh_telemport,   "MAVSH_TELEMPORT",     SERIAL_CONTROL_DEV_TELEM2),
+
     // @Param: PILOT_THR_FILT
     // @DisplayName: Throttle filter cutoff
     // @Description: Throttle filter cutoff (Hz) - active whenever altitude control is inactive - 0 to disable
