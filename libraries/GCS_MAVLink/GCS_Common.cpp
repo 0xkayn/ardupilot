@@ -211,19 +211,30 @@ void GCS_MAVLINK::send_battery_status(const uint8_t instance) const
 
     // prepare arrays of individual cell voltages
     uint16_t cell_volts[MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_LEN];
-    uint16_t cell_volts_ext[MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_EXT_LEN];
+
+    // changed from [MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_EXT_LEN]
+    // uint16_t cell_volts_ext[11];
+    // added while devs fix this bc of compilation error
+    //uint8_t MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_EXT_LEN = 11;
+    
     if (battery.has_cell_voltages(instance)) {
+        
+           
         const AP_BattMonitor::cells& batt_cells = battery.get_cell_voltages(instance);
         // copy the first 10 cells
         memcpy(cell_volts, batt_cells.cells, sizeof(cell_volts));
-        // 11 ... 14 use a second cell_volts_ext array
-        for (uint8_t i = 0; i < MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_EXT_LEN; i++) {
-            if (MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_LEN+i < uint8_t(ARRAY_SIZE(batt_cells.cells))) {
-                cell_volts_ext[i] = batt_cells.cells[MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_LEN+i];
-            } else {
-                cell_volts_ext[i] = 0;
-            }
-        }
+        // commented bc of compile error 
+        /*
+         * 11 ... 14 use a second cell_volts_ext array
+         * for (uint8_t i = 0; i < MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_EXT_LEN; i++) {
+         *   if (MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_LEN+i < uint8_t(ARRAY_SIZE(batt_cells.cells))) {
+         *       cell_volts_ext[i] = batt_cells.cells[MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_LEN+i];
+         *   } else {
+         *       cell_volts_ext[i] = 0;
+         *   }
+         *
+         *}
+         */
     } else {
         // for battery monitors that cannot provide voltages for individual cells the battery's total voltage is put into the first cell
         // if the total voltage cannot fit into a single field, the remainder into subsequent fields.
@@ -238,9 +249,11 @@ void GCS_MAVLINK::send_battery_status(const uint8_t instance) const
               voltage -= 65534.0f;
           }
         }
-        for (uint8_t i = 0; i < MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_EXT_LEN; i++) {
-            cell_volts_ext[i] = 0;
-        }
+        /*
+         * for (uint8_t i = 0; i < MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_EXT_LEN; i++) {
+         *   cell_volts_ext[i] = 0;
+         *}
+        */
     }
 
     float current, consumed_mah, consumed_wh;
@@ -257,6 +270,7 @@ void GCS_MAVLINK::send_battery_status(const uint8_t instance) const
     } else {
         consumed_wh = -1;
     }
+
     mavlink_msg_battery_status_send(chan,
                                     instance, // id
                                     MAV_BATTERY_FUNCTION_UNKNOWN, // function
@@ -267,9 +281,9 @@ void GCS_MAVLINK::send_battery_status(const uint8_t instance) const
                                     consumed_mah, // total consumed current in milliampere.hour
                                     consumed_wh,  // consumed energy in hJ (hecto-Joules)
                                     battery.capacity_remaining_pct(instance),
-                                    0, // time remaining, seconds (not provided)
-                                    MAV_BATTERY_CHARGE_STATE_UNDEFINED,
-                                    cell_volts_ext); // Cell 11..14 voltages
+                                    0, // time remaining
+                                    MAVLINK_MSG_BATTERY_STATUS_FIELD_VOLTAGES_EXT_LEN,
+                                    0); // removed cell_volt_ext
 }
 
 // returns true if all battery instances were reported
